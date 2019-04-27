@@ -18,45 +18,42 @@ namespace chess {
 		std::vector<std::tuple<int, int>> valid_moves;
 	public:
 		Piece(Type piece_type, Color piece_color);
-		Type getType();
+		virtual Type getType();
 		Color getColor();
+		std::vector<std::tuple<int, int>> getValidMoves();
 		virtual bool canMoveOneBlock() = 0;
-		virtual std::vector<std::tuple<int, int>> getMoveDirections() = 0;
+		std::vector<std::tuple<int, int>> getMoveDirections();
 	};
 	class King : public Piece {
 	public:
 		King(Color piece_color);
 		bool canMoveOneBlock();
-		std::vector<std::tuple<int, int>> getMoveDirections();
 	};
 	class Queen : public Piece {
 	public:
 		Queen(Color piece_color);
 		bool canMoveOneBlock();
-		std::vector<std::tuple<int, int>> getMoveDirections();
 	};
 	class Rook : public Piece {
 	public:
 		Rook(Color piece_color);
 		bool canMoveOneBlock();
-		std::vector<std::tuple<int, int>> getMoveDirections();
 	};
 	class Bishop : public Piece {
 	public:
 		Bishop(Color piece_color);
 		bool canMoveOneBlock();
-		std::vector<std::tuple<int, int>> getMoveDirections();
 	};
 	class Knight : public Piece {
 	public:
 		Knight(Color piece_color);
 		bool canMoveOneBlock();
-		std::vector<std::tuple<int, int>> getMoveDirections();
 	};
 	class Pawn : public Piece {
+		bool promoted;
+		Type promoted_to;
 	public:
 		Pawn(Color piece_color);
 		bool canMoveOneBlock();
-		std::vector<std::tuple<int, int>> getMoveDirections();
 	};
 }
