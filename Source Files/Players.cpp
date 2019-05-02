@@ -294,7 +294,7 @@ chess::Player::Player(Board & board, Color side_color) {
 void chess::Player::displayValidMoves() {
 	for (auto itr = player_set.begin(); itr != player_set.end(); itr++) {
 		std::vector<std::tuple<int, int>> valid_moves_vector = (*itr)->getValidMoves();
-		for (int i = 0; i < valid_moves_vector.size(); i++) {
+		for (unsigned int i = 0; i < valid_moves_vector.size(); i++) {
 			std::cout << std::get<0>((*itr)->current_block) << " " << std::get<1>((*itr)->current_block) << " -> " << std::get<0>(valid_moves_vector[i]) << " " << std::get<1>(valid_moves_vector[i]) << std::endl;
 		}
 	}
@@ -364,8 +364,8 @@ bool chess::Player::updateValidMoves(Board & board) {
 						int rank2 = rank1 + k * delta_rank, file2 = file1 + k * delta_file;
 						if (!onBoard(rank2, file2))
 							break;
-						if ((board.getPiece(rank2, file2) == nullptr) || (board.getPiece(rank2, file2)->getColor() != player_side)) {
-							Piece* piece2 = board.getPiece(rank2, file2);
+						Piece* piece2 = board.getPiece(rank2, file2);
+						if ((piece2 == nullptr) || (piece2->getColor() != player_side)) {
 							board.removePiece(rank1, file1);
 							board.placePiece(piece, rank2, file2);
 							if (!this->isChecked(board))
@@ -373,7 +373,7 @@ bool chess::Player::updateValidMoves(Board & board) {
 							board.placePiece(piece, rank1, file1);
 							board.placePiece(piece2, rank2, file2);
 						}
-						else {
+						if (piece2 != nullptr) {
 							break;
 						}
 					}
@@ -385,14 +385,12 @@ bool chess::Player::updateValidMoves(Board & board) {
 }
 
 void chess::Player::capture(Piece * captured_piece) {
-	auto itr = player_set.begin();
-	for (; itr != player_set.end(); itr++) {
-		if ((*itr) == captured_piece) {
-			break;
-		}
+	if (captured_piece == nullptr) {
+		return;
+	} else if (captured_piece->getColor() == player_side) {
+		captured_piece->current_block = std::make_tuple(8, 8);
+		captured_piece->valid_moves.clear();
 	}
-	if (itr != player_set.end())
-		player_set.erase(itr);
 }
 
 void chess::Player::displayInfo() {
