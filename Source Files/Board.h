@@ -2,6 +2,8 @@
 
 #include "Pieces.h"
 
+#include <vector>
+
 namespace chess {
 	class Board {
 	private:
