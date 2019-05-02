@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
 #include <tuple>
+#include <string>
 
 namespace chess {
-
 	enum Color { black, white };
 	enum Type { king, queen, rook, bishop, knight, pawn };
 
@@ -16,6 +16,8 @@ namespace chess {
 		std::vector<std::tuple<int, int>> possible_directions;
 		std::tuple<int, int> current_block;
 		std::vector<std::tuple<int, int>> valid_moves;
+		float vertices[16];
+		std::string path;
 	public:
 		Piece(Type piece_type, Color piece_color);
 		virtual Type getType();
@@ -23,6 +25,8 @@ namespace chess {
 		std::vector<std::tuple<int, int>> getValidMoves();
 		virtual bool canMoveOneBlock() = 0;
 		std::vector<std::tuple<int, int>> getMoveDirections();
+		float* getVertices();
+		std::string getPath();
 	};
 	class King : public Piece {
 	public:
@@ -55,5 +59,6 @@ namespace chess {
 	public:
 		Pawn(Color piece_color);
 		bool canMoveOneBlock();
+		Type promotedTo();
 	};
 }
