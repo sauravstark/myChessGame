@@ -55,38 +55,6 @@ static void draw(const std::string& path, float* vertices)
 	renderer.Draw(va, ib, shader);
 }
 
-chess::GameManager::Move::Move() {
-	moving_piece = nullptr;
-	captured_piece = nullptr;
-}
-
-chess::GameManager::Move::Move(std::tuple<int, int> src, std::tuple<int, int> des, Piece * moving_piece, Piece * captured_piece) {
-	this->src = src;
-	this->des = des;
-	this->moving_piece = moving_piece;
-	this->captured_piece = captured_piece;
-}
-
-bool chess::GameManager::Move::isInvalid() {
-	return (moving_piece == nullptr);
-}
-
-std::tuple<int, int> chess::GameManager::Move::getSrc() {
-	return src;
-}
-
-std::tuple<int, int> chess::GameManager::Move::getDes() {
-	return des;
-}
-
-chess::Piece * chess::GameManager::Move::getMovingPiece() {
-	return moving_piece;
-}
-
-chess::Piece * chess::GameManager::Move::getCapturedPiece() {
-	return captured_piece;
-}
-
 void chess::GameManager::makeMove(std::tuple<int, int> src, std::tuple<int, int> des) {
 	int src_rank = std::get<0>(src), src_file = std::get<1>(src), des_rank = std::get<0>(des), des_file = std::get<1>(des);
 	if ((!onBoard(src_rank, src_file)) || (!onBoard(des_rank, des_file)))
@@ -122,11 +90,13 @@ void chess::GameManager::undoMove() {
 		board.placePiece(moving_piece, rank1, file1);
 		board.placePiece(captured_piece, rank2, file2);
 		turn = ((turn == Color::white) ? (Color::black) : (Color::white));
+		Player& side = ((turn == Color::white) ? team_white : team_black);
+		side.updateValidMoves(board);
 		previous_moves.pop();
 	}
 }
 
-chess::GameManager::GameManager(): board(),team_white(board, Color::white), team_black(board, Color::black){
+chess::GameManager::GameManager(): board(), team_white(board, Color::white), team_black(board, Color::black) {
 	turn = chess::Color::white;
 	current_state = GameState::selecting_square;
 	selector = std::make_tuple(0, 4);
@@ -325,26 +295,7 @@ void draw_pieces(chess::Board& board, std::tuple<int, int> selector_pos) {
 					piece_type = "queen";
 					break;
 				case chess::Type::pawn:
-					switch (((chess::Pawn*)piece)->promotedTo()) {
-					case chess::Type::rook:
-						piece_type = "rook";
-						break;
-					case chess::Type::knight:
-						piece_type = "knight";
-						break;
-					case chess::Type::bishop:
-						piece_type = "bishop";
-						break;
-					case chess::Type::queen:
-						piece_type = "queen";
-						break;
-					case chess::Type::pawn:
-						piece_type = "pawn";
-						break;
-					default:
-						break;
-					}
-					break;
+					piece_type = "pawn";
 				default:
 					break;
 				}
