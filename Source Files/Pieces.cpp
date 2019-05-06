@@ -28,13 +28,7 @@ float* chess::Piece::getVertices() {
 	return vertices;
 }
 
-std::string chess::Piece::getPath()
-{
-	return path;
-}
-
 chess::King::King(Color piece_color) : Piece(Type::king, piece_color) {
-	path = std::string("res/textures/pieces/chess-alt-") + ((piece_color == chess::Color::white) ? std::string("white") : std::string("black")) + std::string("-solid-king.png");
 	possible_directions.push_back(std::make_tuple( 1,  0));
 	possible_directions.push_back(std::make_tuple(-1,  0));
 	possible_directions.push_back(std::make_tuple( 0,  1));
@@ -50,7 +44,6 @@ bool chess::King::canMoveOneBlock() {
 }
 
 chess::Queen::Queen(Color piece_color) : Piece(Type::queen, piece_color) {
-	path = std::string("res/textures/pieces/chess-alt-") + ((piece_color == chess::Color::white) ? std::string("white") : std::string("black")) + std::string("-solid-queen.png");
 	possible_directions.push_back(std::make_tuple( 1,  0));
 	possible_directions.push_back(std::make_tuple(-1,  0));
 	possible_directions.push_back(std::make_tuple( 0,  1));
@@ -66,7 +59,6 @@ bool chess::Queen::canMoveOneBlock() {
 }
 
 chess::Rook::Rook(Color piece_color) : Piece(Type::rook, piece_color) {
-	path = std::string("res/textures/pieces/chess-alt-") + ((piece_color == chess::Color::white) ? std::string("white") : std::string("black")) + std::string("-solid-rook.png");
 	possible_directions.push_back(std::make_tuple( 1,  0));
 	possible_directions.push_back(std::make_tuple(-1,  0));
 	possible_directions.push_back(std::make_tuple( 0,  1));
@@ -78,7 +70,6 @@ bool chess::Rook::canMoveOneBlock() {
 }
 
 chess::Bishop::Bishop(Color piece_color) : Piece(Type::bishop, piece_color) {
-	path = std::string("res/textures/pieces/chess-alt-") + ((piece_color == chess::Color::white) ? std::string("white") : std::string("black")) + std::string("-solid-bishop.png");
 	possible_directions.push_back(std::make_tuple( 1,  1));
 	possible_directions.push_back(std::make_tuple( 1, -1));
 	possible_directions.push_back(std::make_tuple(-1,  1));
@@ -90,7 +81,6 @@ bool chess::Bishop::canMoveOneBlock() {
 }
 
 chess::Knight::Knight(Color piece_color) : Piece(Type::knight, piece_color) {
-	path = std::string("res/textures/pieces/chess-alt-") + ((piece_color == chess::Color::white) ? std::string("white") : std::string("black")) + std::string("-solid-knight.png");
 	possible_directions.push_back(std::make_tuple( 2,  1));
 	possible_directions.push_back(std::make_tuple( 2, -1));
 	possible_directions.push_back(std::make_tuple(-2,  1));
@@ -106,13 +96,7 @@ bool chess::Knight::canMoveOneBlock() {
 }
 
 chess::Pawn::Pawn(Color piece_color) : Piece(Type::pawn, piece_color) {
-	path = std::string("res/textures/pieces/chess-alt-") + ((piece_color == chess::Color::white) ? std::string("white") : std::string("black")) + std::string("-solid-pawn.png");
-	promoted = false;
 	promoted_to = Type::pawn;
-	if (piece_color == Color::white)
-		possible_directions.push_back(std::make_tuple( 1, 0));
-	else
-		possible_directions.push_back(std::make_tuple(-1, 0));
 }
 
 bool chess::Pawn::canMoveOneBlock() {	
@@ -122,7 +106,7 @@ bool chess::Pawn::canMoveOneBlock() {
 		return false;
 }
 
-chess::Type chess::Pawn::promotedTo()
+chess::Type chess::Pawn::getType()
 {
 	return promoted_to;
 }
