@@ -6,6 +6,38 @@ static bool onBoard(int rank, int file) {
 	return ((rank >= 0) && (rank < 8) && (file >= 0) && (file < 8));
 }
 
+chess::Move::Move() {
+	moving_piece = nullptr;
+	captured_piece = nullptr;
+}
+
+chess::Move::Move(std::tuple<int, int> src, std::tuple<int, int> des, Piece* moving_piece, Piece* captured_piece) {
+	this->src = src;
+	this->des = des;
+	this->moving_piece = moving_piece;
+	this->captured_piece = captured_piece;
+}
+
+bool chess::Move::isInvalid() {
+	return (moving_piece == nullptr);
+}
+
+std::tuple<int, int> chess::Move::getSrc() {
+	return src;
+}
+
+std::tuple<int, int> chess::Move::getDes() {
+	return des;
+}
+
+chess::Piece* chess::Move::getMovingPiece() {
+	return moving_piece;
+}
+
+chess::Piece* chess::Move::getCapturedPiece() {
+	return captured_piece;
+}
+
 chess::Board::Board() : squares() {
 	this->placePiece(new Rook(Color::white), 0, 0);
 	this->placePiece(new Knight(Color::white), 0, 1);
@@ -58,8 +90,28 @@ chess::Piece * chess::Board::getPiece(int rank, int file) {
 void chess::Board::placePiece(Piece * piece, int rank, int file) {
 	if (onBoard(rank, file)) {
 		squares[rank][file].placePiece(piece);
-		if (piece != nullptr)
+		if (piece != nullptr) {
 			piece->current_block = std::make_tuple(rank, file);
+			float ycord = -437.5f + rank * 125.0f;
+			float xcord = 437.5f - file * 125.0f;
+			float span = 100.0f;
+			piece->vertices[ 0] = xcord - span / 2;
+			piece->vertices[ 1] = ycord - span / 2;
+			piece->vertices[ 2] = 0.0f;
+			piece->vertices[ 3] = 0.0f;
+			piece->vertices[ 4] = xcord + span / 2;
+			piece->vertices[ 5] = ycord - span / 2;
+			piece->vertices[ 6] = 1.0f;
+			piece->vertices[ 7] = 0.0f;
+			piece->vertices[ 8] = xcord + span / 2;
+			piece->vertices[ 9] = ycord + span / 2;
+			piece->vertices[10] = 1.0f;
+			piece->vertices[11] = 1.0f;
+			piece->vertices[12] = xcord - span / 2;
+			piece->vertices[13] = ycord + span / 2;
+			piece->vertices[14] = 0.0f;
+			piece->vertices[15] = 1.0f;
+		}
 	}
 }
 
@@ -87,6 +139,18 @@ void chess::Board::display() {
 			if (piece == nullptr) {
 				std::cout << "  ";
 			} else {
+				switch (piece->getColor())
+				{
+				case chess::Color::white:
+					std::cout << "W";
+					break;
+				case chess::Color::black:
+					std::cout << "B";
+					break;
+				default:
+					std::cout << " ";
+					break;
+				}
 				switch (piece->getType())
 				{
 				case chess::Type::king:
@@ -106,18 +170,6 @@ void chess::Board::display() {
 					break;
 				case chess::Type::pawn:
 					std::cout << "P";
-					break;
-				default:
-					std::cout << " ";
-					break;
-				}
-				switch (piece->getColor())
-				{
-				case chess::Color::white:
-					std::cout << "W";
-					break;
-				case chess::Color::black:
-					std::cout << "B";
 					break;
 				default:
 					std::cout << " ";
