@@ -17,7 +17,6 @@ namespace chess {
 		std::tuple<int, int> current_block;
 		std::vector<std::tuple<int, int>> valid_moves;
 		float vertices[16];
-		std::string path;
 	public:
 		Piece(Type piece_type, Color piece_color);
 		virtual Type getType();
@@ -26,7 +25,6 @@ namespace chess {
 		virtual bool canMoveOneBlock() = 0;
 		std::vector<std::tuple<int, int>> getMoveDirections();
 		float* getVertices();
-		std::string getPath();
 	};
 	class King : public Piece {
 	public:
@@ -54,11 +52,11 @@ namespace chess {
 		bool canMoveOneBlock();
 	};
 	class Pawn : public Piece {
-		bool promoted;
 		Type promoted_to;
 	public:
 		Pawn(Color piece_color);
 		bool canMoveOneBlock();
-		Type promotedTo();
+		chess::Type getType();
+		//Type promotedTo();
 	};
 }
