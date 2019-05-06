@@ -291,6 +291,10 @@ chess::Player::Player(Board & board, Color side_color) {
 	}
 }
 
+chess::Color chess::Player::getColor() {
+	return player_side;
+}
+
 void chess::Player::displayValidMoves() {
 	for (auto itr = player_set.begin(); itr != player_set.end(); itr++) {
 		std::vector<std::tuple<int, int>> valid_moves_vector = (*itr)->getValidMoves();
@@ -309,24 +313,34 @@ bool chess::Player::updateValidMoves(Board & board) {
 		const int rank1 = std::get<0>(current_block), file1 = std::get<1>(current_block);
 		if (onBoard(rank1, file1)) {
 			if (piece->canMoveOneBlock()) {
-				for (unsigned int j = 0; j < move_direction_vector.size(); j++) {
-					int rank2 = rank1 + std::get<0>(move_direction_vector[j]), file2 = file1 + std::get<1>(move_direction_vector[j]);
-					if (onBoard(rank2, file2)) {
-						Piece* piece2 = board.getPiece(rank2, file2);
-						if ((piece2 == nullptr) || ((piece->getType() == chess::Type::knight) && (piece2->getColor() != player_side))) {
-							board.removePiece(rank1, file1);
-							board.placePiece(piece, rank2, file2);
-							if (!this->isChecked(board))
-								player_set[i]->valid_moves.push_back(std::make_tuple(rank2, file2));
-							board.placePiece(piece2, rank2, file2);
-							board.placePiece(piece, rank1, file1);
+				if (piece->getType() != chess::Type::pawn) {
+					for (unsigned int j = 0; j < move_direction_vector.size(); j++) {
+						int rank2 = rank1 + std::get<0>(move_direction_vector[j]), file2 = file1 + std::get<1>(move_direction_vector[j]);
+						if (onBoard(rank2, file2)) {
+							Piece* piece2 = board.getPiece(rank2, file2);
+							if ((piece2 == nullptr) || (piece2->getColor() != player_side)) {
+								board.removePiece(rank1, file1);
+								board.placePiece(piece, rank2, file2);
+								if (!this->isChecked(board))
+									player_set[i]->valid_moves.push_back(std::make_tuple(rank2, file2));
+								board.placePiece(piece2, rank2, file2);
+								board.placePiece(piece, rank1, file1);
+							}
 						}
 					}
-				}
-				if (piece->getType() == chess::Type::pawn) {
+				} else {
 					int delta_rank = ((player_side == chess::Color::white) ? 1 : -1);
-					int rank2 = rank1 + 2 * delta_rank, file2 = file1;
-					if (((std::get<0>(player_set[i]->current_block) == 1) && (player_side == chess::Color::white)) || ((std::get<0>(player_set[i]->current_block) == 6) && (player_side == chess::Color::black))) {
+					int rank2 = rank1 + delta_rank, file2 = file1;
+					if ((onBoard(rank2, file2)) && (board.getPiece(rank2, file2) == nullptr)) {
+						board.removePiece(rank1, file1);
+						board.placePiece(piece, rank2, file2);
+						if (!this->isChecked(board))
+								player_set[i]->valid_moves.push_back(std::make_tuple(rank2, file2));
+						board.removePiece(rank2, file2);
+						board.placePiece(piece, rank1, file1);
+					}
+					if (((std::get<0>(piece->current_block) == 1) && (player_side == Color::white)) || ((std::get<0>(piece->current_block) == 6) && (player_side == Color::black))) {
+						rank2 = rank1 + 2 * delta_rank, file2 = file1;
 						if ((board.getPiece(rank1 + delta_rank, file1) == nullptr) && (board.getPiece(rank1 + 2 * delta_rank, file1) == nullptr)) {
 							board.removePiece(rank1, file1);
 							board.placePiece(piece, rank2, file2);
