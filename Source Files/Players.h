@@ -10,7 +10,7 @@ namespace chess {
 		std::vector<Piece*> player_set;
 	public:
 		Player(Board& board, Color side_color);
-
+		Color getColor();
 	private:
 		bool isChecked(Board& board); //Returns true if king is checked
 		bool noValidMoves(); //Returns true if no valid moves are possible by any piece
