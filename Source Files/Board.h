@@ -5,6 +5,18 @@
 #include <vector>
 
 namespace chess {
+	class Move {
+		std::tuple <int, int> src, des;
+		Piece* moving_piece, * captured_piece;
+	public:
+		Move();
+		Move(std::tuple<int, int> src, std::tuple<int, int> des, Piece* moving_piece, Piece* captured_piece);
+		bool isInvalid();
+		std::tuple<int, int> getSrc();
+		std::tuple<int, int> getDes();
+		Piece* getMovingPiece();
+		Piece* getCapturedPiece();
+	};
 	class Board {
 	private:
 		class Square {
